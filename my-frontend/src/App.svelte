@@ -2,6 +2,24 @@
 	import { onMount } from 'svelte';
 	import { GraphQLClient } from 'graphql-request';
 	import Users from './lib/Users.svelte';
+	import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
+	// import {
+	//   TopAppBar,
+	//   Row,
+	//   Section,
+	//   Title,
+	//   NavigationIcon,
+	//   ActionItem
+	// } from '@smui/top-app-bar';
+	import Drawer, { AppContent, Content } from '@smui/drawer';
+	import List, { Item } from '@smui/list';
+	import IconButton from '@smui/icon-button';
+	import NavigationIcon from '@smui/icon-button';
+
+	let open = true;
+	function toggleDrawer() {
+		open = !open;
+	}
 
 	const PAGE_SIZE = 10;
 	let users = [];
@@ -94,24 +112,64 @@
 	}
 </script>
 
-<main>
-	<h1>Harvest Tech Challenge</h1>
-	<Users
-		{users}
-		{currentPage}
-		{totalOfPage}
-		on:next={nextPage}
-		on:prev={prevPage}
-	/>
-	<!-- <Users {users} /> -->
+<TopAppBar>
+	<Row>
+		<Section>
+			<NavigationIcon>
+				<IconButton on:click={toggleDrawer} class="material-icons">
+					menu
+				</IconButton>
+			</NavigationIcon>
+			<Title>Harvest Tech Challenge</Title>
+		</Section>
+		<!-- You can also add other action items in the header if needed. -->
+		<!-- <Section alignEnd actionItems>
+      <ActionItem>
+        <IconButton class="material-icons">more_vert</IconButton>
+      </ActionItem>
+    </Section> -->
+	</Row>
+</TopAppBar>
 
-	<!-- <button on:click={prevPage} disabled={currentPage === 1}
-		>Previous Page</button
+<div class="drawer-container">
+	<Drawer variant="dismissible" bind:open>
+		<Content>
+			<List>
+				<Item
+					on:click={() => {
+						/* Navigate or do something */
+					}}>Menu Item 1</Item
+				>
+				<Item
+					on:click={() => {
+						/* Navigate or do something */
+					}}>Menu Item 2</Item
+				>
+				<Item
+					on:click={() => {
+						/* Navigate or do something */
+					}}>Menu Item 3</Item
+				>
+			</List>
+		</Content>
+	</Drawer>
+
+	<div
+		class="main-content mt-16 p-6"
+		style={open ? 'margin-left: 256px;' : ''}
 	>
-	<button on:click={nextPage} disabled={currentPage === totalOfPage}
-		>Next Page</button
-	> -->
-</main>
+		<main>
+			<h1>Harvest Tech Challenge</h1>
+			<Users
+				{users}
+				{currentPage}
+				{totalOfPage}
+				on:next={nextPage}
+				on:prev={prevPage}
+			/>
+		</main>
+	</div>
+</div>
 
 <style>
 	.logo {
