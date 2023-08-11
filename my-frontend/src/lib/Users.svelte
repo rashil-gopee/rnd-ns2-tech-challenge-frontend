@@ -4,6 +4,10 @@
 	import { Label } from '@smui/common';
 	import IconButton from '@smui/icon-button';
 	import Select, { Option } from '@smui/select';
+	import Dialog, { Title, Content, Actions } from '@smui/dialog';
+	import Button from '@smui/button';
+	import Chip, { Set, Text } from '@smui/chips';
+
 	import DataTable, {
 		Body,
 		Cell,
@@ -15,6 +19,8 @@
 	export let users = [];
 	export let currentPage = 1;
 	export let totalOfPage = 1;
+	$: currentPage = currentPage;
+	$: totalOfPage = totalOfPage;
 
 	const dispatch = createEventDispatcher();
 
@@ -29,7 +35,30 @@
 	function prevPage() {
 		dispatch('prev');
 	}
+
+	async function createUser() {
+		if (!newUsername) return;
+
+		// Add your mutation logic here...
+
+		closeDialog();
+		// Optionally: Refresh user list after adding.
+		// fetchUsers();
+	}
+
+	function openDialog() {
+		isDialogOpen = true;
+	}
+
+	function closeDialog() {
+		isDialogOpen = false;
+	}
+
+	let newUsername = '';
+	let isDialogOpen = false;
 </script>
+
+<button on:click={openDialog}>Add New User</button>
 
 <DataTable table$aria-label="User list" style="width: 100%;">
 	<Head>
@@ -45,9 +74,15 @@
 				<Cell numeric>{user.id}</Cell>
 				<Cell>{user.username}</Cell>
 				<Cell>
-					{#each user.companies as company (company.id)}
-						{company.name}<br />
-					{/each}
+					<Set
+						chips={user.companies.map((company) => company.name)}
+						let:chip
+						nonInteractive
+					>
+						<Chip {chip}>
+							<Text>{chip}</Text>
+						</Chip>
+					</Set>
 				</Cell>
 			</Row>
 		{/each}
@@ -84,3 +119,17 @@
 		</IconButton>
 	</Pagination>
 </DataTable>
+
+<Dialog bind:open={isDialogOpen}>
+	<Title>Create New User</Title>
+	<Content>
+		<input type="text" bind:value={newUsername} placeholder="Username" />
+	</Content>
+	<Actions>
+		<Button on:click={createUser}>Create</Button>
+		<Button on:click={closeDialog} variant="text">Close</Button>
+	</Actions>
+</Dialog>
+
+<style>
+</style>
