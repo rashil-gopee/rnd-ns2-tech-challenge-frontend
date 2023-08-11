@@ -2,12 +2,13 @@
 	import { onMount } from 'svelte';
 	import { GraphQLClient } from 'graphql-request';
 	import Users from './lib/Users.svelte';
-	import UsersTable from './lib/UsersTable.svelte';
 
-	const PAGE_SIZE = 20;
+	const PAGE_SIZE = 10;
 	let users = [];
 	let currentPage = 1;
 	let totalOfPage = 1;
+	let newUsername = '';
+	let isDialogOpen = false;
 
 	// Function to fetch users with pagination
 	async function fetchUsers() {
@@ -53,6 +54,24 @@
 		totalOfPage = pagination.totalOfPage;
 	}
 
+	async function createUser() {
+		if (!newUsername) return;
+
+		// Add your mutation logic here...
+
+		closeDialog();
+		// Optionally: Refresh user list after adding.
+		// fetchUsers();
+	}
+
+	function openDialog() {
+		isDialogOpen = true;
+	}
+
+	function closeDialog() {
+		isDialogOpen = false;
+	}
+
 	// Fetch users when the component mounts
 	onMount(async () => {
 		await fetchUsers();
@@ -61,7 +80,7 @@
 	// Function to fetch next page
 	async function nextPage() {
 		if (currentPage < totalOfPage) {
-			currentPage++;
+			currentPage = currentPage + 1;
 			await fetchUsers();
 		}
 	}
@@ -69,7 +88,7 @@
 	// Function to fetch previous page
 	async function prevPage() {
 		if (currentPage > 1) {
-			currentPage--;
+			currentPage = currentPage - 1;
 			await fetchUsers();
 		}
 	}
@@ -77,7 +96,7 @@
 
 <main>
 	<h1>Harvest Tech Challenge</h1>
-	<UsersTable
+	<Users
 		{users}
 		{currentPage}
 		{totalOfPage}

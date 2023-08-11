@@ -7,6 +7,7 @@
 	import Dialog, { Title, Content, Actions } from '@smui/dialog';
 	import Button from '@smui/button';
 	import Chip, { Set, Text } from '@smui/chips';
+  import TextField, { Input } from '@smui/textfield';
 
 	import DataTable, {
 		Body,
@@ -58,7 +59,7 @@
 	let isDialogOpen = false;
 </script>
 
-<button on:click={openDialog}>Add New User</button>
+<Button on:click={openDialog} raised class="mb-6 mt-6">Add New User</Button>
 
 <DataTable table$aria-label="User list" style="width: 100%;">
 	<Head>
@@ -122,9 +123,10 @@
 
 <Dialog bind:open={isDialogOpen}>
 	<Title>Create New User</Title>
-	<Content>
-		<input type="text" bind:value={newUsername} placeholder="Username" />
-	</Content>
+	<Content class="!p-6">
+    <TextField label="Username" bind:value={newUsername} variant="outlined">
+</TextField>
+  	</Content>
 	<Actions>
 		<Button on:click={createUser}>Create</Button>
 		<Button on:click={closeDialog} variant="text">Close</Button>
