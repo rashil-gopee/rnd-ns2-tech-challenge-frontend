@@ -16,6 +16,7 @@
 		Pagination,
 		Row,
 	} from '@smui/data-table';
+	import AddUserDialog from './AddUserDialog.svelte';
 
 	export let users = [];
 	export let currentPage = 1;
@@ -137,20 +138,11 @@
 	<img src="https://unsplash.it/g/600/400" alt="Placeholder" />
 </div>
 
-<Dialog bind:open={isDialogOpen}>
-	<Title>Create New User</Title>
-	<Content class="!p-6">
-		<TextField
-			label="Username"
-			bind:value={newUsername}
-			variant="outlined"
-		/>
-	</Content>
-	<Actions>
-		<Button on:click={createUser}>Create</Button>
-		<Button on:click={closeDialog} variant="text">Close</Button>
-	</Actions>
-</Dialog>
+<AddUserDialog
+	bind:open={isDialogOpen}
+	onClose={closeDialog}
+	onCreate={createUser}
+/>
 
 <style>
 </style>
