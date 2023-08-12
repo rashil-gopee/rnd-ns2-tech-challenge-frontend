@@ -121,6 +121,22 @@
 	</Pagination>
 </DataTable>
 
+<div>
+	<img src="https://unsplash.it/g/600/400" alt="Placeholder" />
+</div>
+
+<div>
+	<img src="https://unsplash.it/g/600/400" alt="Placeholder" />
+</div>
+
+<div>
+	<img src="https://unsplash.it/g/600/400" alt="Placeholder" />
+</div>
+
+<div>
+	<img src="https://unsplash.it/g/600/400" alt="Placeholder" />
+</div>
+
 <Dialog bind:open={isDialogOpen}>
 	<Title>Create New User</Title>
 	<Content class="!p-6">

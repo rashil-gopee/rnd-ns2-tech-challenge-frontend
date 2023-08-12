@@ -7,7 +7,7 @@
 
 	const menuItems = [
 		{ path: '/', label: 'Home' },
-		{ path: '/menuItem2', label: 'Menu Item 2' },
+		{ path: '/users', label: 'Users' },
 		// add more menu items as needed
 	];
 

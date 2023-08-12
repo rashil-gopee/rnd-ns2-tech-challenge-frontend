@@ -17,6 +17,7 @@
 	import NavigationIcon from '@smui/icon-button';
 	import { Router, Link, Route } from 'svelte-navigator';
 	import Sidenav from './lib/Sidenav.svelte';
+	import Home from './lib/Home.svelte';
 
 	let open = true;
 	function toggleDrawer() {
@@ -114,57 +115,57 @@
 	}
 </script>
 
-<TopAppBar>
-	<Row>
-		<Section>
-			<NavigationIcon>
-				<IconButton on:click={toggleDrawer} class="material-icons">
-					menu
-				</IconButton>
-			</NavigationIcon>
-			<Title>Harvest Tech Challenge</Title>
-		</Section>
-		<!-- You can also add other action items in the header if needed. -->
-		<!-- <Section alignEnd actionItems>
-      <ActionItem>
-        <IconButton class="material-icons">more_vert</IconButton>
-      </ActionItem>
-    </Section> -->
-	</Row>
-</TopAppBar>
+<div class="flex flex-col h-screen overflow-hidden">
+	<TopAppBar class="relative flex-shrink-0">
+		<Row>
+			<Section>
+				<NavigationIcon>
+					<IconButton on:click={toggleDrawer} class="material-icons">
+						menu
+					</IconButton>
+				</NavigationIcon>
+				<Title>Harvest Tech Challenge</Title>
+			</Section>
+		</Row>
+	</TopAppBar>
 
-<Router>
-	<div class="drawer-container">
-		<Drawer variant="dismissible" bind:open>
-			<Content>
-				<Sidenav />
-			</Content>
-		</Drawer>
+	<Router>
+		<div class="flex-grow overflow-hidden">
+			<div class="drawer-container flex h-full">
+				<Drawer
+					variant="dismissible"
+					bind:open
+					class="h-full overflow-y-auto"
+				>
+					<Content class="h-full">
+						<Sidenav />
+					</Content>
+				</Drawer>
 
-		<div
-			class="main-content mt-16 p-6"
-			style={open ? 'margin-left: 256px;' : ''}
-		>
-			<main>
-				<Route path="/" let:params>
-					<h1>Harvest Tech Challenge</h1>
-					<Users
-						{users}
-						{currentPage}
-						{totalOfPage}
-						on:next={nextPage}
-						on:prev={prevPage}
-					/>
-				</Route>
+				<div
+					class={`main-content p-6 flex-grow overflow-y-auto ${
+						open ? 'ml-64' : ''
+					}`}
+				>
+					<main class="h-full w-full">
+						<Route path="/" component={Home} />
 
-				<Route path="/menuItem2" let:params>
-					<!-- Menu item 2 content -->
-					<div>This is content for Menu Item 2.</div>
-				</Route>
-			</main>
+						<Route path="/users" let:params>
+							<h1>Harvest Tech Challenge</h1>
+							<Users
+								{users}
+								{currentPage}
+								{totalOfPage}
+								on:next={nextPage}
+								on:prev={prevPage}
+							/>
+						</Route>
+					</main>
+				</div>
+			</div>
 		</div>
-	</div>
-</Router>
+	</Router>
+</div>
 
 <style>
 	.logo {
