@@ -7,7 +7,7 @@
 	import Dialog, { Title, Content, Actions } from '@smui/dialog';
 	import Button from '@smui/button';
 	import Chip, { Set, Text } from '@smui/chips';
-  import TextField, { Input } from '@smui/textfield';
+	import TextField, { Input } from '@smui/textfield';
 
 	import DataTable, {
 		Body,
@@ -124,9 +124,12 @@
 <Dialog bind:open={isDialogOpen}>
 	<Title>Create New User</Title>
 	<Content class="!p-6">
-    <TextField label="Username" bind:value={newUsername} variant="outlined">
-</TextField>
-  	</Content>
+		<TextField
+			label="Username"
+			bind:value={newUsername}
+			variant="outlined"
+		/>
+	</Content>
 	<Actions>
 		<Button on:click={createUser}>Create</Button>
 		<Button on:click={closeDialog} variant="text">Close</Button>
