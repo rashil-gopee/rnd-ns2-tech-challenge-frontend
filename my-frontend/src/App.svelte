@@ -15,6 +15,8 @@
 	import List, { Item } from '@smui/list';
 	import IconButton from '@smui/icon-button';
 	import NavigationIcon from '@smui/icon-button';
+	import { Router, Link, Route } from 'svelte-navigator';
+	import Sidenav from './lib/Sidenav.svelte';
 
 	let open = true;
 	function toggleDrawer() {
@@ -131,45 +133,38 @@
 	</Row>
 </TopAppBar>
 
-<div class="drawer-container">
-	<Drawer variant="dismissible" bind:open>
-		<Content>
-			<List>
-				<Item
-					on:click={() => {
-						/* Navigate or do something */
-					}}>Menu Item 1</Item
-				>
-				<Item
-					on:click={() => {
-						/* Navigate or do something */
-					}}>Menu Item 2</Item
-				>
-				<Item
-					on:click={() => {
-						/* Navigate or do something */
-					}}>Menu Item 3</Item
-				>
-			</List>
-		</Content>
-	</Drawer>
+<Router>
+	<div class="drawer-container">
+		<Drawer variant="dismissible" bind:open>
+			<Content>
+				<Sidenav />
+			</Content>
+		</Drawer>
 
-	<div
-		class="main-content mt-16 p-6"
-		style={open ? 'margin-left: 256px;' : ''}
-	>
-		<main>
-			<h1>Harvest Tech Challenge</h1>
-			<Users
-				{users}
-				{currentPage}
-				{totalOfPage}
-				on:next={nextPage}
-				on:prev={prevPage}
-			/>
-		</main>
+		<div
+			class="main-content mt-16 p-6"
+			style={open ? 'margin-left: 256px;' : ''}
+		>
+			<main>
+				<Route path="/" let:params>
+					<h1>Harvest Tech Challenge</h1>
+					<Users
+						{users}
+						{currentPage}
+						{totalOfPage}
+						on:next={nextPage}
+						on:prev={prevPage}
+					/>
+				</Route>
+
+				<Route path="/menuItem2" let:params>
+					<!-- Menu item 2 content -->
+					<div>This is content for Menu Item 2.</div>
+				</Route>
+			</main>
+		</div>
 	</div>
-</div>
+</Router>
 
 <style>
 	.logo {
