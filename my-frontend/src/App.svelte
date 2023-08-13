@@ -16,41 +16,42 @@
 		open = !open;
 	}
 
-	let PAGE_SIZE = 10;
 	let users = [];
-	let currentPage = 1;
-	let totalOfPage = 1;
-	let newUsername = '';
-	let isDialogOpen = false;
+	let pageSize: number;
+	let currentPage: number;
+	let totalOfPage: number;
+	let totalOfRecord: number;
 
-	async function fetchUsers() {
+	async function fetchUsers(page: number, pageSize: number) {
+		console.log('fetchUsers', page, pageSize);
 		const endpoint =
 			'https://rnd-ns2-tech-challenge-next-be.vercel.app/api/graphql';
 		const query = `
-        query Users($page: Int, $pageSize: Int) {
+		query Users($page: Int, $pageSize: Int) {
           Users(pagination: { page: $page, pageSize: $pageSize }) {
-            data {
-              id
-              username
-              companies {
-                id
-                name
-              }
-            }
-            meta {
-              pagination {
-                page
-                pageSize
-                totalOfPage
-              }
-            }
-          }
-        }
+			data {
+				id
+				username
+				companies {
+				id
+				name
+				}
+			}
+			meta {
+				pagination {
+				page
+				pageSize
+				totalOfPage
+				totalOfRecord
+				}
+			}
+			}
+		}
       `;
 
 		const variables = {
-			page: currentPage,
-			pageSize: PAGE_SIZE,
+			page: page,
+			pageSize: pageSize,
 		};
 
 		const client = new GraphQLClient(endpoint);
@@ -64,50 +65,33 @@
 		} = response;
 
 		users = data;
+		pageSize = pagination.pageSize;
+		currentPage = pagination.page;
 		totalOfPage = pagination.totalOfPage;
+		totalOfRecord = pagination.totalOfRecord;
 	}
 
-	async function createUser() {
+	async function createUser(newUsername) {
 		if (!newUsername) return;
 
-		// Add your mutation logic here...
-
-		closeDialog();
-		// Optionally: Refresh user list after adding.
-		// fetchUsers();
-	}
-
-	function openDialog() {
-		isDialogOpen = true;
-	}
-
-	function closeDialog() {
-		isDialogOpen = false;
-	}
-
-	onMount(async () => {
-		await fetchUsers();
-	});
-
-	async function nextPage() {
-		if (currentPage < totalOfPage) {
-			currentPage = currentPage + 1;
-			await fetchUsers();
-		}
-	}
-
-	async function prevPage() {
-		if (currentPage > 1) {
-			currentPage = currentPage - 1;
-			await fetchUsers();
-		}
+		console.log('newUsername', newUsername);
 	}
 
 	function handlePageSizeChange(event: CustomEvent<number>) {
+		console.log('event', event);
 		const newPageSize = event.detail;
-		PAGE_SIZE = newPageSize;
+		pageSize = newPageSize;
 		currentPage = 1;
-		fetchUsers();
+		fetchUsers(currentPage, newPageSize);
+	}
+
+	function handleNavigation(
+		event: CustomEvent<{ page: number; pageSize: number }>
+	) {
+		const pageOptions = event.detail;
+		const { page, pageSize } = pageOptions;
+		currentPage = page;
+		fetchUsers(page, pageSize);
 	}
 </script>
 
@@ -147,14 +131,13 @@
 						<Route path="/" component={Home} />
 
 						<Route path="/users" let:params>
-							<h1>Harvest Tech Challenge</h1>
 							<Users
 								{users}
 								{currentPage}
 								{totalOfPage}
-								on:next={nextPage}
-								on:prev={prevPage}
+								{totalOfRecord}
 								on:changePageSize={handlePageSizeChange}
+								on:navigate={handleNavigation}
 							/>
 						</Route>
 					</main>

@@ -11,6 +11,7 @@ type PaginationMeta = {
 	page: number;
 	pageSize: number;
 	totalOfPage: number;
+	totalOfRecord: number;
 };
 
 type UsersResponse = {
