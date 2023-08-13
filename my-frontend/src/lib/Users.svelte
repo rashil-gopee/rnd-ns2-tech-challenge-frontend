@@ -32,7 +32,7 @@
 
 	let PAGE_SIZE = pageSizeOptions[0];
 	$: start = (currentPage - 1) * PAGE_SIZE;
-	$: end = Math.min(start + PAGE_SIZE, users.length);
+	$: end = Math.min(start + PAGE_SIZE, PAGE_SIZE * currentPage);
 
 	function nextPage() {
 		dispatch('next');
@@ -108,7 +108,7 @@
 			</Select>
 		</svelte:fragment>
 		<svelte:fragment slot="total">
-			{start + 1}-{end} of {users.length * totalOfPage}
+			{start + 1}-{end} of {PAGE_SIZE * totalOfPage}
 		</svelte:fragment>
 
 		<IconButton
