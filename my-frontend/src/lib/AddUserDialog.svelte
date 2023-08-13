@@ -18,7 +18,6 @@
 
 		myForm.validate();
 		if ($myForm.valid) {
-			console.log('Creating user', $username.value);
 			onCreate($username.value);
 			handleClose();
 		}

@@ -23,7 +23,11 @@
 	export let totalOfPage = 1;
 	export let totalOfRecord = 0;
 	let pageSizeOptions = [10, 20, 50, 100];
-	let pageSize = pageSizeOptions[0];
+	export let pageSize = pageSizeOptions[0];
+
+	$: if (typeof pageSize === 'number') {
+		navigate(currentPage, pageSize);
+	}
 
 	const dispatch = createEventDispatcher();
 
@@ -37,10 +41,6 @@
 
 	function closeDialog() {
 		isDialogOpen = false;
-	}
-
-	$: if (typeof pageSize === 'number') {
-		navigate(currentPage, pageSize);
 	}
 
 	let newUsername = '';

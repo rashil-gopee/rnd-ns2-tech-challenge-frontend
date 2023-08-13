@@ -4,7 +4,6 @@
 	import Users from './lib/Users.svelte';
 	import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
 	import Drawer, { AppContent, Content } from '@smui/drawer';
-	import List, { Item } from '@smui/list';
 	import IconButton from '@smui/icon-button';
 	import NavigationIcon from '@smui/icon-button';
 	import { Router, Link, Route } from 'svelte-navigator';
@@ -19,11 +18,19 @@
 	let totalOfPage: number;
 	let totalOfRecord: number;
 
+	let currentAbortController: AbortController | null = null;
+
 	const ENDPOINT =
 		'https://rnd-ns2-tech-challenge-next-be.vercel.app/api/graphql';
 
 	async function fetchUsers(page: number, size: number) {
-		console.log('fetchUsers', page, size);
+		if (currentAbortController) {
+			currentAbortController.abort();
+		}
+
+		currentAbortController = new AbortController();
+		const signal = currentAbortController.signal;
+
 		const query = `
 		query Users($page: Int, $pageSize: Int) {
           Users(pagination: { page: $page, pageSize: $pageSize }) {
@@ -52,20 +59,36 @@
 			pageSize: size,
 		};
 
-		const client = new GraphQLClient(ENDPOINT);
-		const response = await client.request<UsersResponse>(query, variables);
-		const {
-			Users: {
-				data,
-				meta: { pagination },
-			},
-		} = response;
+		const client = new GraphQLClient(ENDPOINT, {
+			mode: 'cors',
+			signal: signal,
+		});
 
-		users = data;
-		pageSize = pagination.pageSize;
-		currentPage = pagination.page;
-		totalOfPage = pagination.totalOfPage;
-		totalOfRecord = pagination.totalOfRecord;
+		try {
+			const response = await client.request<UsersResponse>(
+				query,
+				variables
+			);
+
+			const {
+				Users: {
+					data,
+					meta: { pagination },
+				},
+			} = response;
+
+			users = data;
+			pageSize = pagination.pageSize;
+			currentPage = pagination.page;
+			totalOfPage = pagination.totalOfPage;
+			totalOfRecord = pagination.totalOfRecord;
+		} catch (error) {
+			if (error.name === 'AbortError') {
+				console.log('Request was aborted');
+			} else {
+				console.error('Error fetching users:', error);
+			}
+		}
 	}
 
 	async function createUser(event: CustomEvent<{ username: string }>) {
@@ -85,15 +108,11 @@
 			username: newUsername,
 		};
 
-		console.log('createUser', variables);
-
 		const client = new GraphQLClient(ENDPOINT);
 
 		try {
 			const response = await client.request(mutation, variables);
 			fetchUsers(1, pageSize);
-
-			console.log('User created:', response);
 		} catch (error) {
 			console.error('Error creating user:', error);
 		}
@@ -102,6 +121,7 @@
 	function handleNavigation(
 		event: CustomEvent<{ page: number; pageSize: number }>
 	) {
+		event.stopPropagation();
 		const pageOptions = event.detail;
 		const { page, pageSize } = pageOptions;
 		currentPage = page;
@@ -111,6 +131,12 @@
 	function toggleDrawer() {
 		open = !open;
 	}
+
+	onDestroy(() => {
+		if (currentAbortController) {
+			currentAbortController.abort();
+		}
+	});
 </script>
 
 <div class="flex flex-col h-screen overflow-hidden">
@@ -154,6 +180,7 @@
 								{currentPage}
 								{totalOfPage}
 								{totalOfRecord}
+								{pageSize}
 								on:navigate={handleNavigation}
 								on:createUser={createUser}
 							/>
