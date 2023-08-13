@@ -111,8 +111,9 @@
 		const client = new GraphQLClient(ENDPOINT);
 
 		try {
-			const response = await client.request(mutation, variables);
-			fetchUsers(1, pageSize);
+			await client.request(mutation, variables);
+			const lastPage = Math.ceil(totalOfRecord / pageSize);
+			fetchUsers(lastPage, pageSize);
 		} catch (error) {
 			console.error('Error creating user:', error);
 		}
