@@ -12,9 +12,6 @@
 	import Home from './lib/Home.svelte';
 
 	let open = true;
-	function toggleDrawer() {
-		open = !open;
-	}
 
 	let users = [];
 	let pageSize: number;
@@ -22,8 +19,8 @@
 	let totalOfPage: number;
 	let totalOfRecord: number;
 
-	async function fetchUsers(page: number, pageSize: number) {
-		console.log('fetchUsers', page, pageSize);
+	async function fetchUsers(page: number, size: number) {
+		console.log('fetchUsers', page, size);
 		const endpoint =
 			'https://rnd-ns2-tech-challenge-next-be.vercel.app/api/graphql';
 		const query = `
@@ -51,7 +48,7 @@
 
 		const variables = {
 			page: page,
-			pageSize: pageSize,
+			pageSize: size,
 		};
 
 		const client = new GraphQLClient(endpoint);
@@ -77,14 +74,6 @@
 		console.log('newUsername', newUsername);
 	}
 
-	function handlePageSizeChange(event: CustomEvent<number>) {
-		console.log('event', event);
-		const newPageSize = event.detail;
-		pageSize = newPageSize;
-		currentPage = 1;
-		fetchUsers(currentPage, newPageSize);
-	}
-
 	function handleNavigation(
 		event: CustomEvent<{ page: number; pageSize: number }>
 	) {
@@ -92,6 +81,10 @@
 		const { page, pageSize } = pageOptions;
 		currentPage = page;
 		fetchUsers(page, pageSize);
+	}
+
+	function toggleDrawer() {
+		open = !open;
 	}
 </script>
 
@@ -136,7 +129,6 @@
 								{currentPage}
 								{totalOfPage}
 								{totalOfRecord}
-								on:changePageSize={handlePageSizeChange}
 								on:navigate={handleNavigation}
 							/>
 						</Route>

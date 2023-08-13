@@ -9,8 +9,6 @@
 	import Chip, { Set, Text } from '@smui/chips';
 	import TextField, { Input } from '@smui/textfield';
 
-	export let onChangePageSize = () => {};
-
 	import DataTable, {
 		Body,
 		Cell,
@@ -51,20 +49,18 @@
 	}
 
 	$: if (typeof pageSize === 'number') {
-		dispatch('changePageSize', { pageSize: pageSize });
-	}
-
-	function navigatePage(page: number) {
-		currentPage = page;
-		dispatch('navigate', { page: currentPage, pageSize: pageSize });
+		navigate(currentPage, pageSize);
 	}
 
 	let newUsername = '';
 	let isDialogOpen = false;
 
+	function navigate(page: number, size: number) {
+		dispatch('navigate', { page, pageSize: size });
+	}
+
 	onMount(async () => {
-		console.log('DataTable onMount called');
-		dispatch('navigate', { page: currentPage, pageSize: pageSize });
+		navigate(currentPage, pageSize);
 	});
 </script>
 
@@ -117,7 +113,7 @@
 			class="material-icons"
 			action="first-page"
 			title="First page"
-			on:click={() => navigatePage(1)}
+			on:click={() => navigate(1, pageSize)}
 			disabled={currentPage === 1}
 		>
 			first_page
@@ -127,7 +123,7 @@
 			class="material-icons"
 			action="prev-page"
 			title="Prev page"
-			on:click={() => navigatePage(currentPage - 1)}
+			on:click={() => navigate(currentPage - 1, pageSize)}
 			disabled={currentPage === 1}
 		>
 			chevron_left
@@ -136,7 +132,7 @@
 			class="material-icons"
 			action="next-page"
 			title="Next page"
-			on:click={() => navigatePage(currentPage + 1)}
+			on:click={() => navigate(currentPage + 1, pageSize)}
 			disabled={currentPage === totalOfPage}
 		>
 			chevron_right
@@ -146,7 +142,7 @@
 			class="material-icons"
 			action="last-page"
 			title="Last page"
-			on:click={() => navigatePage(totalOfPage)}
+			on:click={() => navigate(totalOfPage, pageSize)}
 			disabled={currentPage === totalOfPage}
 		>
 			last_page
