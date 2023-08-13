@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { GraphQLClient } from 'graphql-request';
 	import Users from './lib/Users.svelte';
 	import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
@@ -19,10 +19,11 @@
 	let totalOfPage: number;
 	let totalOfRecord: number;
 
+	const ENDPOINT =
+		'https://rnd-ns2-tech-challenge-next-be.vercel.app/api/graphql';
+
 	async function fetchUsers(page: number, size: number) {
 		console.log('fetchUsers', page, size);
-		const endpoint =
-			'https://rnd-ns2-tech-challenge-next-be.vercel.app/api/graphql';
 		const query = `
 		query Users($page: Int, $pageSize: Int) {
           Users(pagination: { page: $page, pageSize: $pageSize }) {
@@ -51,9 +52,8 @@
 			pageSize: size,
 		};
 
-		const client = new GraphQLClient(endpoint);
+		const client = new GraphQLClient(ENDPOINT);
 		const response = await client.request<UsersResponse>(query, variables);
-		console.log('response', response);
 		const {
 			Users: {
 				data,
@@ -68,10 +68,35 @@
 		totalOfRecord = pagination.totalOfRecord;
 	}
 
-	async function createUser(newUsername) {
+	async function createUser(event: CustomEvent<{ username: string }>) {
+		const { username: newUsername } = event.detail;
 		if (!newUsername) return;
 
-		console.log('newUsername', newUsername);
+		const mutation = `
+        mutation ($username: String!) {
+            createUser(username: $username) {
+                id
+                username
+            }
+        }
+    `;
+
+		const variables = {
+			username: newUsername,
+		};
+
+		console.log('createUser', variables);
+
+		const client = new GraphQLClient(ENDPOINT);
+
+		try {
+			const response = await client.request(mutation, variables);
+			fetchUsers(1, pageSize);
+
+			console.log('User created:', response);
+		} catch (error) {
+			console.error('Error creating user:', error);
+		}
 	}
 
 	function handleNavigation(
@@ -130,6 +155,7 @@
 								{totalOfPage}
 								{totalOfRecord}
 								on:navigate={handleNavigation}
+								on:createUser={createUser}
 							/>
 						</Route>
 					</main>

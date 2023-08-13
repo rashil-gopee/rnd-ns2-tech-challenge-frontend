@@ -22,22 +22,13 @@
 	export let currentPage = 1;
 	export let totalOfPage = 1;
 	export let totalOfRecord = 0;
-	$: currentPage = currentPage;
-	$: totalOfPage = totalOfPage;
-	$: totalOfRecord = totalOfRecord;
 	let pageSizeOptions = [10, 20, 50, 100];
 	let pageSize = pageSizeOptions[0];
 
 	const dispatch = createEventDispatcher();
 
-	async function createUser() {
-		if (!newUsername) return;
-
-		// Add your mutation logic here...
-
-		// closeDialog();
-		// Optionally: Refresh user list after adding.
-		// fetchUsers();
+	function createUser(username: string) {
+		dispatch('createUser', { username: username });
 	}
 
 	function openDialog() {
@@ -106,7 +97,7 @@
 			</Select>
 		</svelte:fragment>
 		<svelte:fragment slot="total">
-			Page {currentPage} out of {totalOfPage}
+			Page {currentPage} of {totalOfPage} ({totalOfRecord} records)
 		</svelte:fragment>
 
 		<IconButton

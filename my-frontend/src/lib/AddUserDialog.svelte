@@ -12,7 +12,7 @@
 	const username = field('username', '', [required()]);
 	const myForm = form(username);
 
-	async function handleCreateUser(event: Event) {
+	function handleCreateUser(event: Event) {
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -20,6 +20,7 @@
 		if ($myForm.valid) {
 			console.log('Creating user', $username.value);
 			onCreate($username.value);
+			handleClose();
 		}
 	}
 
