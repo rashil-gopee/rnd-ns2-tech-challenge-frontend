@@ -1,5 +1,4 @@
 <script>
-	// ... any script logic you want
 </script>
 
 <div class="grid grid-cols-2 grid-rows-2 h-full w-full">

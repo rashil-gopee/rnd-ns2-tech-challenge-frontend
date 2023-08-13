@@ -8,7 +8,6 @@
 	const menuItems = [
 		{ path: '/', label: 'Home' },
 		{ path: '/users', label: 'Users' },
-		// add more menu items as needed
 	];
 
 	$: activePath = $location.pathname;

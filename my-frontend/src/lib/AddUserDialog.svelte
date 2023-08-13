@@ -10,26 +10,26 @@
 	export let onCreate = (username: string) => {};
 
 	const username = field('username', '', [required()]);
-	const myForm = form(username);
+	const userForm = form(username);
 
 	function handleCreateUser(event: Event) {
 		event.stopPropagation();
 		event.preventDefault();
 
-		myForm.validate();
-		if ($myForm.valid) {
+		userForm.validate();
+		if ($userForm.valid) {
 			onCreate($username.value);
 			handleClose();
 		}
 	}
 
 	function handleClose() {
-		myForm.reset();
+		userForm.reset();
 		onClose();
 	}
 
 	$: if (!open) {
-		myForm.reset();
+		userForm.reset();
 	}
 </script>
 
@@ -41,8 +41,7 @@
 			bind:value={$username.value}
 			variant="outlined"
 		/>
-		<!-- Display error message if there is one -->
-		{#if $myForm.hasError('username.required')}
+		{#if $userForm.hasError('username.required')}
 			<div>Username is required</div>
 		{/if}
 	</Content>

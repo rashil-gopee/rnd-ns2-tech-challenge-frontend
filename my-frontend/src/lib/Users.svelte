@@ -4,10 +4,8 @@
 	import { Label } from '@smui/common';
 	import IconButton from '@smui/icon-button';
 	import Select, { Option } from '@smui/select';
-	import Dialog, { Title, Content, Actions } from '@smui/dialog';
 	import Button from '@smui/button';
 	import Chip, { Set, Text } from '@smui/chips';
-	import TextField, { Input } from '@smui/textfield';
 
 	import DataTable, {
 		Body,
@@ -43,7 +41,6 @@
 		isDialogOpen = false;
 	}
 
-	let newUsername = '';
 	let isDialogOpen = false;
 
 	function navigate(page: number, size: number) {
