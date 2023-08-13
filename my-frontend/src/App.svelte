@@ -55,6 +55,7 @@
 
 		const client = new GraphQLClient(endpoint);
 		const response = await client.request<UsersResponse>(query, variables);
+		console.log('response', response);
 		const {
 			Users: {
 				data,

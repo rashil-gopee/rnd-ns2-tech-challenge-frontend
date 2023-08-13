@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { form, field } from 'svelte-forms';
+	import { required } from 'svelte-forms/validators';
 	import TextField, { Input } from '@smui/textfield';
 	import Dialog, { Title, Content, Actions } from '@smui/dialog';
 	import Button from '@smui/button';
@@ -7,23 +9,27 @@
 	export let onClose = () => {};
 	export let onCreate = (username: string) => {};
 
-	let newUsername = '';
-	let usernameError = '';
+	const username = field('username', '', [required()]);
+	const myForm = form(username);
 
-	function validateUsername() {
-		if (newUsername.length <= 0) {
-			usernameError = 'Username is required.';
-			return false;
-		} else {
-			usernameError = ''; // Clear the error
-			return true;
+	async function handleCreateUser(event: Event) {
+		event.stopPropagation();
+		event.preventDefault();
+
+		myForm.validate();
+		if ($myForm.valid) {
+			console.log('Creating user', $username.value);
+			onCreate($username.value);
 		}
 	}
 
-	function handleCreateUser() {
-		if (!validateUsername()) return;
-		onCreate(newUsername);
-		newUsername = ''; // Clear the input after creation
+	function handleClose() {
+		myForm.reset();
+		onClose();
+	}
+
+	$: if (!open) {
+		myForm.reset();
 	}
 </script>
 
@@ -32,14 +38,18 @@
 	<Content class="!p-6">
 		<TextField
 			label="Username"
-			bind:value={newUsername}
+			bind:value={$username.value}
 			variant="outlined"
 		/>
 		<!-- Display error message if there is one -->
-		{#if usernameError}<p class="text-red-500 mt-2">{usernameError}</p>{/if}
+		{#if $myForm.hasError('username.required')}
+			<div>Username is required</div>
+		{/if}
 	</Content>
 	<Actions>
 		<Button on:click={handleCreateUser}>Create</Button>
-		<Button on:click={onClose} variant="text">Close</Button>
+		<Button type="button" on:click={handleClose} variant="text"
+			>Close</Button
+		>
 	</Actions>
 </Dialog>
