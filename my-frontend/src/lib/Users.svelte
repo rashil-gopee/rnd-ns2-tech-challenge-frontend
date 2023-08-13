@@ -9,6 +9,8 @@
 	import Chip, { Set, Text } from '@smui/chips';
 	import TextField, { Input } from '@smui/textfield';
 
+	export let onChangePageSize = () => {};
+
 	import DataTable, {
 		Body,
 		Cell,
@@ -26,9 +28,11 @@
 
 	const dispatch = createEventDispatcher();
 
-	const PAGE_SIZE = 20;
-	let start = (currentPage - 1) * PAGE_SIZE;
-	let end = Math.min(start + PAGE_SIZE, users.length);
+	let pageSizeOptions = [10, 20, 50, 100];
+
+	let PAGE_SIZE = pageSizeOptions[0];
+	$: start = (currentPage - 1) * PAGE_SIZE;
+	$: end = Math.min(start + PAGE_SIZE, users.length);
 
 	function nextPage() {
 		dispatch('next');
@@ -54,6 +58,10 @@
 
 	function closeDialog() {
 		isDialogOpen = false;
+	}
+
+	$: if (typeof PAGE_SIZE === 'number') {
+		dispatch('changePageSize', PAGE_SIZE);
 	}
 
 	let newUsername = '';
@@ -93,8 +101,10 @@
 	<Pagination slot="paginate">
 		<svelte:fragment slot="rowsPerPage">
 			<Label>Rows Per Page</Label>
-			<Select variant="outlined" value={PAGE_SIZE} disabled>
-				<Option value={PAGE_SIZE}>{PAGE_SIZE}</Option>
+			<Select variant="outlined" bind:value={PAGE_SIZE}>
+				{#each pageSizeOptions as option}
+					<Option value={option}>{option}</Option>
+				{/each}
 			</Select>
 		</svelte:fragment>
 		<svelte:fragment slot="total">
@@ -121,22 +131,6 @@
 		</IconButton>
 	</Pagination>
 </DataTable>
-
-<div>
-	<img src="https://unsplash.it/g/600/400" alt="Placeholder" />
-</div>
-
-<div>
-	<img src="https://unsplash.it/g/600/400" alt="Placeholder" />
-</div>
-
-<div>
-	<img src="https://unsplash.it/g/600/400" alt="Placeholder" />
-</div>
-
-<div>
-	<img src="https://unsplash.it/g/600/400" alt="Placeholder" />
-</div>
 
 <AddUserDialog
 	bind:open={isDialogOpen}

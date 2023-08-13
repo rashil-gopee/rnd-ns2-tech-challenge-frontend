@@ -3,14 +3,6 @@
 	import { GraphQLClient } from 'graphql-request';
 	import Users from './lib/Users.svelte';
 	import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
-	// import {
-	//   TopAppBar,
-	//   Row,
-	//   Section,
-	//   Title,
-	//   NavigationIcon,
-	//   ActionItem
-	// } from '@smui/top-app-bar';
 	import Drawer, { AppContent, Content } from '@smui/drawer';
 	import List, { Item } from '@smui/list';
 	import IconButton from '@smui/icon-button';
@@ -24,14 +16,13 @@
 		open = !open;
 	}
 
-	const PAGE_SIZE = 10;
+	let PAGE_SIZE = 10;
 	let users = [];
 	let currentPage = 1;
 	let totalOfPage = 1;
 	let newUsername = '';
 	let isDialogOpen = false;
 
-	// Function to fetch users with pagination
 	async function fetchUsers() {
 		const endpoint =
 			'https://rnd-ns2-tech-challenge-next-be.vercel.app/api/graphql';
@@ -93,12 +84,10 @@
 		isDialogOpen = false;
 	}
 
-	// Fetch users when the component mounts
 	onMount(async () => {
 		await fetchUsers();
 	});
 
-	// Function to fetch next page
 	async function nextPage() {
 		if (currentPage < totalOfPage) {
 			currentPage = currentPage + 1;
@@ -106,12 +95,18 @@
 		}
 	}
 
-	// Function to fetch previous page
 	async function prevPage() {
 		if (currentPage > 1) {
 			currentPage = currentPage - 1;
 			await fetchUsers();
 		}
+	}
+
+	function handlePageSizeChange(event: CustomEvent<number>) {
+		const newPageSize = event.detail;
+		PAGE_SIZE = newPageSize;
+		currentPage = 1;
+		fetchUsers();
 	}
 </script>
 
@@ -158,6 +153,7 @@
 								{totalOfPage}
 								on:next={nextPage}
 								on:prev={prevPage}
+								on:changePageSize={handlePageSizeChange}
 							/>
 						</Route>
 					</main>
